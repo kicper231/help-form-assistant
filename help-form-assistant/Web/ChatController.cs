@@ -1,34 +1,39 @@
+using help.form.assistant.Domain;
 using help_form_assistant.Application;
 using Microsoft.AspNetCore.Mvc;
+using src.Web.DTO;
 
 namespace help_form_assistant.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("chat", Name = "chat")]
     public class ChatController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<ChatController> _logger;
+        private readonly IChatService _chatService;
 
-        public ChatController(ILogger<ChatController> logger)
+        public ChatController(ILogger<ChatController> logger, ChatService chatService)
         {
             _logger = logger;
+            _chatService = chatService;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet("sessions/{seassionId}")]
+        public IActionResult GetSeassion(string seassionId)
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return Ok(new { seassionId });
+        }
+
+        [HttpPost("sessions")]
+        public IActionResult CreateSeassion(ChatSeassionCreateDTO chatSeassionCreateDTO)
+        {
+            return Ok(chatSeassionCreateDTO);
+        }
+
+        [HttpPost("messages")]
+        public IActionResult SendMessage()
+        {
+            return Ok();
         }
     }
 }
